@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- displays site properly based on user's device -->
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+
+    <title> Interactive comments section</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+</head>
+
+<body>
+
+    <article class="container">
+
+
+
+    </article>
+
+    <template>
+        <section class="comment">
+            <div class="counter">
+                <div class="counter-img">
+                    <img src="./images/icon-plus.svg" alt="">
+                </div>
+                <p id="score">
+                    15
+                </p>
+                <div class="counter-img">
+                    <img src="./images/icon-minus.svg" alt="">
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="comment-header">
+                    <div class="profile-img">
+                        <img src="./images/avatars/image-amyrobson.png" alt="">
+                    </div>
+                    <div class="profile-info">
+                        <p id="name" class="name">
+                            amysobinson
+                        </p>
+                        <p id="date" class="date">
+                            1 month ago
+                        </p>
+                    </div>
+                </div>
+                <p id="comment-text" class="comment-text">
+
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum excepturi mollitia animi aperiam. Obcaecati nesciunt harum provident praesentium consequatur incidunt laboriosam atque qui nihil, debitis id est molestiae nemo assumenda.
+                </p>
+            </div>
+            <div class="reply">
+                <div class="reply-img">
+
+                </div>
+                <p>
+                    Reply
+                </p>
+            </div>
+        </section>
+        <section class="comment comment-you">
+            <div class="counter">
+                <div class="counter-img">
+                    <img src="./images/icon-plus.svg" alt="">
+                </div>
+                <p id="score">
+                    15
+                </p>
+                <div class="counter-img">
+                    <img src="./images/icon-minus.svg" alt="">
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="comment-header">
+                    <div class="profile-img">
+                        <img src="./images/avatars/image-amyrobson.png" alt="">
+                    </div>
+                    <div class="profile-info">
+                        <p id="name" class="name">
+                            amysobinson
+                        </p>
+                        <div class="you-header">
+                            you
+                        </div>
+                        <p id="date" class="date">
+                            1 month ago
+                        </p>
+                    </div>
+                </div>
+                <p id="comment-text" class="comment-text">
+
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum excepturi mollitia animi aperiam. Obcaecati nesciunt harum provident praesentium consequatur incidunt laboriosam atque qui nihil, debitis id est molestiae nemo assumenda.
+                </p>
+            </div>
+            <div class="edit-delete">
+                <div class="delete">
+                    <div class="delete-img">
+
+                    </div>
+                    <p>
+                        Delete
+                    </p>
+                </div>
+                <div class="edit">
+                    <div class="edit-img">
+
+                    </div>
+                    <p>
+                        Edit
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section class="add-comment ">
+            <form action="">
+                <div class="add-comment-profile">
+                    <div class="profile-img">
+                        <img src="./images/avatars/image-amyrobson.png" alt="">
+                    </div>
+                </div>
+                <textarea name="" id="" cols="30" rows="10" placeholder="Add a comment..." class="comment-textarea"></textarea>
+                <input id="comment-submit" type="submit" value="send">
+            </form>
+
+        </section>
+        <section class="delete-popup">
+            <div class="delete-card">
+                <h1>Delete comment</h1>
+                <p>
+                    Are you sure you want to delete this comment? This will remove the comment and cant't be undone.
+                </p>
+                <div class="delete-options">
+                    <button id="button-cancel">
+                        no, cancel
+                    </button>
+                    <button id="button-delete">
+                        yes, delete
+                    </button>
+                </div>
+            </div>
+        </section>
+    </template>
+    <!-- Pull dynamic content from the data.json file -->
+
+    <!-- <div class="attribution">
+        Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. Coded by <a href="#">Your Name Here</a>.
+    </div> -->
+</body>
+
+</html>
