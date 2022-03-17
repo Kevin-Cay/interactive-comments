@@ -116,6 +116,17 @@ function addCount(count) {
 }
 
 function subCount(count) {
+    let id = count.parentNode.parentNode.getAttribute('id')
+    let actualNumber = document.getElementById(id).querySelector('#score').innerHTML
+    actualNumber = Number(actualNumber) - 1
+    document.getElementById(id).querySelector('#score').innerHTML = actualNumber
+    id = id.split('-').map(element => Number(element))
+    if (id.length > 1) {
+        console.log(id)
+    } else {
+        console.log(id)
+    }
+    console.log(actualNumber)
     console.log(count.parentNode.parentNode.getAttribute('id'))
 }
 
