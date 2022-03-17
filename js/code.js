@@ -10,7 +10,7 @@ let youReplyCommentTemplate = document.getElementById('you-reply-template').cont
 
 const fragment = document.createDocumentFragment();
 
-let currentUser = {};
+const data = {};
 
 /**
  * 
@@ -19,7 +19,9 @@ let currentUser = {};
 onload = async() => {
     let localData = localStorage.getItem('commentData')
     if (localData) {
-        const data = JSON.parse(localData)
+        const responseData = JSON.parse(localData)
+        data.comments = responseData.comments
+        data.currentUser = responseData.currentUser
         currentUser = data.currentUser;
         printComments(data.comments);
     } else {
@@ -37,7 +39,7 @@ onload = async() => {
  */
 function printComments(comments) {
     comments.map(element => {
-        if (element.user.username === currentUser.username) {
+        if (element.user.username === data.currentUser.username) {
             fillTemplate(yourCommentTemplate, element, element.id)
         } else {
             fillTemplate(commentTemplate, element, element.id)
@@ -52,7 +54,7 @@ function printComments(comments) {
 
 function printReplies(replies, fatherId) {
     replies.map(reply => {
-        if (reply.user.username === currentUser.username) {
+        if (reply.user.username === data.currentUser.username) {
             fillTemplate(youReplyCommentTemplate, reply, [fatherId, reply.id].join('-'))
         } else {
             fillTemplate(replyCommentTemplate, reply, [fatherId, reply.id].join('-'))
@@ -80,7 +82,7 @@ function fillTemplate(template, data, id) {
  * @param {Object} userInfo 
  */
 function printAddComent() {
-    addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${currentUser.image.png}" alt="">`;
+    addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
     const clone = addCommentTemplate.cloneNode(true);
     fragment.appendChild(clone);
     // console.log(fragment.childElementCount)
@@ -94,7 +96,23 @@ function addComment(event) {
 }
 
 function addCount(count) {
-    console.log(count.parentNode.parentNode.getAttribute('id'))
+
+    let id = count.parentNode.parentNode.getAttribute('id')
+    let actualNumber = document.getElementById(id).querySelector('#score').innerHTML
+    actualNumber = Number(actualNumber) + 1
+    document.getElementById(id).querySelector('#score').innerHTML = actualNumber
+    id = id.split('-').map(element => Number(element))
+        // if (id.length > 1) {
+        //     // let comment = data.comments.filter((el) => el.id === id[0])[0]
+        //     let firstIndex = data.comments.findIndex(el => el.id === id[0])
+        //     let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === id[1])
+        //     data.comments[firstIndex].replies[secondIndex].score += 1
+        //         // console.log(data.comments[firstIndex].replies[secondIndex].score)
+        //     localStorage.setItem('commentData', JSON.stringify(data))
+
+    // } else {
+    //     console.log(id)
+    // }
 }
 
 function subCount(count) {
@@ -108,7 +126,7 @@ function replyComment(event) {
         let username = event.parentNode.getAttribute('name')
         username = '@'.concat(username).concat(', ')
         let elementSelected = document.getElementById(id)
-        addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${currentUser.image.png}" alt="">`;
+        addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
         addCommentTemplate.querySelector('.comment-textarea').value = username
         addCommentTemplate.getElementById('input-comment-submit').value = "Reply"
         const clone = addCommentTemplate.cloneNode(true);
