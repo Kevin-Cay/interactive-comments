@@ -1,3 +1,6 @@
+/**
+ * All the templates and variables 
+ */
 const container = document.getElementById('container');
 let commentTemplate = document.getElementById('comment').content
 let yourCommentTemplate = document.getElementById('comment-you').content
@@ -7,9 +10,12 @@ let youReplyCommentTemplate = document.getElementById('you-reply-template').cont
 
 const fragment = document.createDocumentFragment();
 
-let currentUser = {}
+let currentUser = {};
 
-
+/**
+ * 
+ *async function to inicialize the page with the comments
+ */
 onload = async() => {
     let localData = localStorage.getItem('commentData')
     if (localData) {
@@ -32,49 +38,40 @@ onload = async() => {
 function printComments(comments) {
     comments.map(element => {
         if (element.user.username === currentUser.username) {
-
+            fillTemplate(yourCommentTemplate, element, element.id)
         } else {
-            commentTemplate.querySelector('.comment').setAttribute('id', element.id)
-            commentTemplate.getElementById('comment-profile-img').innerHTML = `<img src="${element.user.image.png}" alt="">`;
-            commentTemplate.getElementById('name').innerHTML = element.user.username;
-            commentTemplate.getElementById('date').innerHTML = element.createdAt;
-            commentTemplate.getElementById('comment-text').textContent = element.content
-            commentTemplate.getElementById('score').innerHTML = element.score;
-            const clone = commentTemplate.cloneNode(true);
-            fragment.appendChild(clone);
+            fillTemplate(commentTemplate, element, element.id)
             if (element.replies.length > 0) {
                 printReplies(element.replies, element.id)
             }
         }
     });
-
-    printAddComent(currentUser)
+    printAddComent()
     container.appendChild(fragment);
 }
 
 function printReplies(replies, fatherId) {
     replies.map(reply => {
         if (reply.user.username === currentUser.username) {
-            youReplyCommentTemplate.querySelector('.comment').setAttribute('id', [fatherId, reply.id].join('-'))
-            youReplyCommentTemplate.getElementById('comment-profile-img').innerHTML = `<img src="${reply.user.image.png}" alt="">`;
-            youReplyCommentTemplate.getElementById('name').innerHTML = reply.user.username;
-            youReplyCommentTemplate.getElementById('date').innerHTML = reply.createdAt;
-            youReplyCommentTemplate.getElementById('comment-text').textContent = reply.content
-            youReplyCommentTemplate.getElementById('score').innerHTML = reply.score;
-            const clone = youReplyCommentTemplate.cloneNode(true);
-            fragment.appendChild(clone);
+            fillTemplate(youReplyCommentTemplate, reply, [fatherId, reply.id].join('-'))
         } else {
-            replyCommentTemplate.querySelector('.comment').setAttribute('id', [fatherId, reply.id].join('-'))
-            replyCommentTemplate.getElementById('comment-profile-img').innerHTML = `<img src="${reply.user.image.png}" alt="">`;
-            replyCommentTemplate.getElementById('name').innerHTML = reply.user.username;
-            replyCommentTemplate.getElementById('date').innerHTML = reply.createdAt;
-            replyCommentTemplate.getElementById('comment-text').textContent = reply.content
-            replyCommentTemplate.getElementById('score').innerHTML = reply.score;
-            const clone = replyCommentTemplate.cloneNode(true);
-            fragment.appendChild(clone);
+            fillTemplate(replyCommentTemplate, reply, [fatherId, reply.id].join('-'))
         }
     })
 
+}
+
+
+function fillTemplate(template, data, id) {
+    template.querySelector('.comment').setAttribute('id', id)
+    template.querySelector('.comment').setAttribute('name', data.user.username)
+    template.getElementById('comment-profile-img').innerHTML = `<img src="${data.user.image.png}" alt="">`;
+    template.getElementById('name').innerHTML = data.user.username;
+    template.getElementById('date').innerHTML = data.createdAt;
+    template.getElementById('comment-text').textContent = data.content
+    template.getElementById('score').innerHTML = data.score;
+    const clone = template.cloneNode(true);
+    fragment.appendChild(clone);
 }
 
 
@@ -82,11 +79,11 @@ function printReplies(replies, fatherId) {
  * 
  * @param {Object} userInfo 
  */
-function printAddComent(userInfo) {
-    console.log(userInfo)
-    addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${userInfo.image.png}" alt="">`;
+function printAddComent() {
+    addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${currentUser.image.png}" alt="">`;
     const clone = addCommentTemplate.cloneNode(true);
     fragment.appendChild(clone);
+    // console.log(fragment.childElementCount)
 }
 
 
@@ -102,4 +99,19 @@ function addCount(count) {
 
 function subCount(count) {
     console.log(count.parentNode.parentNode.getAttribute('id'))
+}
+
+function replyComment(event) {
+    if (event.parentNode.getAttribute('replying')) {} else {
+        event.parentNode.setAttribute('replying', 'true')
+        let id = event.parentNode.getAttribute('id')
+        let username = event.parentNode.getAttribute('name')
+        username = '@'.concat(username).concat(', ')
+        let elementSelected = document.getElementById(id)
+        addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${currentUser.image.png}" alt="">`;
+        addCommentTemplate.querySelector('.comment-textarea').value = username
+        addCommentTemplate.getElementById('input-comment-submit').value = "Reply"
+        const clone = addCommentTemplate.cloneNode(true);
+        elementSelected.after(clone)
+    }
 }

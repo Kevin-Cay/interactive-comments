@@ -53,6 +53,9 @@ body,
     margin-left: 0.5em;
     border-left: 2px solid var(--gray-color);
     padding-left: 0.8em;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
 }
 
 .container-reply {
