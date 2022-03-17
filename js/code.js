@@ -34,8 +34,7 @@ onload = async() => {
 
 /**
  * 
- * @param {Object} comments 
- * @param {Object} currentUser 
+ * @param {Object} comments with a array of comments
  */
 function printComments(comments) {
     comments.map(element => {
@@ -52,6 +51,12 @@ function printComments(comments) {
     container.appendChild(fragment);
 }
 
+
+/**
+ * 
+ * @param {Object} replies with a array of reply comments
+ * @param {Number} fatherId with the id of the comment father  
+ */
 function printReplies(replies, fatherId) {
     replies.map(reply => {
         if (reply.user.username === data.currentUser.username) {
@@ -64,6 +69,13 @@ function printReplies(replies, fatherId) {
 }
 
 
+
+/**
+ * 
+ * @param {nodeTempleate} template the template to fill
+ * @param {Array} data the data to fill the template, if is an array it will fill the template with the array
+ * @param {Number}  id the id of the comment 
+ */
 function fillTemplate(template, data, id) {
     template.querySelector('.comment').setAttribute('id', id)
     template.querySelector('.comment').setAttribute('name', data.user.username)
@@ -95,41 +107,62 @@ function addComment(event) {
     console.log(event.target.comment.value)
 }
 
+/**
+ * 
+ * @param {Event} count the event of the click
+ */
 function addCount(count) {
-
     let id = count.parentNode.parentNode.getAttribute('id')
     let actualNumber = document.getElementById(id).querySelector('#score').innerHTML
     actualNumber = Number(actualNumber) + 1
     document.getElementById(id).querySelector('#score').innerHTML = actualNumber
     id = id.split('-').map(element => Number(element))
-        // if (id.length > 1) {
-        //     // let comment = data.comments.filter((el) => el.id === id[0])[0]
-        //     let firstIndex = data.comments.findIndex(el => el.id === id[0])
-        //     let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === id[1])
-        //     data.comments[firstIndex].replies[secondIndex].score += 1
-        //         // console.log(data.comments[firstIndex].replies[secondIndex].score)
-        //     localStorage.setItem('commentData', JSON.stringify(data))
+    if (id.length > 1) {
+        // let comment = data.comments.filter((el) => el.id === id[0])[0]
+        let firstIndex = data.comments.findIndex(el => el.id === id[0])
+        let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === id[1])
+        data.comments[firstIndex].replies[secondIndex].score += 1
+            // console.log(data.comments[firstIndex].replies[secondIndex].score)
+        localStorage.setItem('commentData', JSON.stringify(data))
 
-    // } else {
-    //     console.log(id)
-    // }
+    } else {
+        let index = data.comments.findIndex(el => el.id === id[0])
+        data.comments[index].score += 1
+        localStorage.setItem('commentData', JSON.stringify(data))
+    }
 }
 
+/**
+ * 
+ * @param {Event} count the event of the click
+ */
 function subCount(count) {
     let id = count.parentNode.parentNode.getAttribute('id')
     let actualNumber = document.getElementById(id).querySelector('#score').innerHTML
-    actualNumber = Number(actualNumber) - 1
+    actualNumber = Number(actualNumber) > 0 ? Number(actualNumber) - 1 : Number(actualNumber)
     document.getElementById(id).querySelector('#score').innerHTML = actualNumber
     id = id.split('-').map(element => Number(element))
     if (id.length > 1) {
-        console.log(id)
+        let firstIndex = data.comments.findIndex(el => el.id === id[0])
+        let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === id[1])
+        if (data.comments[firstIndex].replies[secondIndex].score > 0) {
+            data.comments[firstIndex].replies[secondIndex].score -= 1
+            localStorage.setItem('commentData', JSON.stringify(data))
+        }
     } else {
-        console.log(id)
+        let index = data.comments.findIndex(el => el.id === id[0])
+        if (data.comments[index].score > 0) {
+            data.comments[index].score -= 1
+            localStorage.setItem('commentData', JSON.stringify(data))
+        }
     }
-    console.log(actualNumber)
-    console.log(count.parentNode.parentNode.getAttribute('id'))
 }
 
+
+/**
+ * 
+ * @param {Event} event the event of the click
+ */
 function replyComment(event) {
     if (event.parentNode.getAttribute('replying')) {} else {
         event.parentNode.setAttribute('replying', 'true')
