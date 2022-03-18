@@ -7,6 +7,7 @@ let yourCommentTemplate = document.getElementById('comment-you').content
 let addCommentTemplate = document.getElementById('add-comment').content
 let replyCommentTemplate = document.getElementById('reply-template').content
 let youReplyCommentTemplate = document.getElementById('you-reply-template').content
+let deletePopupTemplate = document.getElementById('delete-popup').content
 
 const fragment = document.createDocumentFragment();
 
@@ -25,8 +26,7 @@ const newCommentTemplate = {
             "webp": ""
         },
         "username": ""
-    },
-    "replies": []
+    }
 }
 
 /**
@@ -37,7 +37,6 @@ onload = async() => {
     let localData = localStorage.getItem('commentData')
     if (localData) {
         const responseData = JSON.parse(localData)
-        console.log(responseData)
         data.comments = responseData.comments
         data.currentUser = responseData.currentUser
         currentUser = data.currentUser;
@@ -106,17 +105,6 @@ function fillTemplate(template, data, id) {
     fragment.appendChild(clone);
 }
 
-function fillReply(template, data, id) {
-    template.querySelector('.comment').setAttribute('id', id)
-    template.querySelector('.comment').setAttribute('name', data.user.username)
-    template.getElementById('comment-profile-img').innerHTML = `<img src="${data.user.image.png}" alt="">`;
-    template.getElementById('name').innerHTML = data.user.username;
-    template.getElementById('date').innerHTML = data.createdAt;
-    template.getElementById('comment-text').textContent = data.content
-    template.getElementById('score').innerHTML = data.score;
-    const clone = template.cloneNode(true);
-    return clone
-}
 
 
 /**
@@ -127,7 +115,6 @@ function printAddComent() {
     addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
     const clone = addCommentTemplate.cloneNode(true);
     fragment.appendChild(clone);
-    // console.log(fragment.childElementCount)
 }
 
 
@@ -204,46 +191,87 @@ function replyComment(event) {
     }
 }
 
-
+/**
+ * 
+ * @param {event} event this event 
+ */
 function addComment(event) {
     event.preventDefault()
     let type = event.target.button.value
     let comment = event.target.comment.value
-    let id = event.target.parentElement.getAttribute('id')
-    id = id.slice(1, id.length).split('-')
-    let newComment = newCommentTemplate
+    let newComment = {}
     let idNumber = 0
     let index = 0
+    let idList = 0
     switch (type) {
         case 'reply':
+            let id = event.target.parentElement.getAttribute('id')
+            id = id.slice(1, id.length).split('-')
             let commentLength = comment.split(', ')[1].length
-
             if (commentLength > 0 && id.length === 1) {
-                let idList = data.comments.map((el) => el.id)
-                idNumber = Math.max(...idList) + 1
                 index = data.comments.findIndex(el => el.id === Number(id[0]))
+                idList = data.comments[index].replies.map(el => el.id)
+                idNumber = idList.length > 0 ? idList[idList.length - 1] += 1 : 1
             } else if (commentLength > 0 && id.length === 2) {
                 let firstIndex = data.comments.findIndex(el => el.id === Number(id[0]))
-                let idList = data.comments[firstIndex].replies.map((el) => el.id)
-                idNumber = Math.max(...idList) + 1
+                idList = data.comments[firstIndex].replies.map((el) => el.id)
+                idNumber = idList.length > 0 ? idList[idList.length - 1] += 1 : 1
                 index = firstIndex
             }
             newComment.id = idNumber
             newComment.content = comment
+            newComment.createdAt = 'Today'
+            newComment.score = 0
+            newComment.user = {}
             newComment.user.username = data.currentUser.username
+            newComment.user.image = {}
             newComment.user.image.png = data.currentUser.image.png
             newComment.user.image.webp = data.currentUser.image.webp
             data.comments[index].replies.push(newComment)
+            newComment = ''
+            localStorage.clear()
             localStorage.setItem('commentData', JSON.stringify(data))
-            container.innerHTML = ""
+            container.innerHTML = ''
             printComments(data.comments)
             break;
         case 'send':
+            idList = data.comments.map((el) => el.id)
+            idNumber = Math.max(...idList) + 1
+            newComment.id = idNumber
+            newComment.content = comment
+            newComment.createdAt = 'Today'
+            newComment.score = 0
+            newComment.user = {}
+            newComment.user.username = data.currentUser.username
+            newComment.user.image = {}
+            newComment.user.image.png = data.currentUser.image.png
+            newComment.user.image.webp = data.currentUser.image.webp
+            newComment.replies = []
+            data.comments.push(newComment)
+            localStorage.setItem('commentData', JSON.stringify(data))
+            location.reload()
             break;
         case 'edit':
             break;
         default:
             break;
     }
+    document.querySelector('.add-comment').setAttribute('id', 0)
+    document.querySelector('.comment-textarea').value = ''
+    document.getElementById('input-comment-submit').value = "send"
 
+}
+
+
+function deleteComment(event) {
+    event.preventDefault()
+    let id = event.target.parentNode.parentNode.parentNode.getAttribute('id')
+    console.log(id)
+
+
+}
+
+function editComment(event) {
+    event.preventDefault()
+    console.log(event.target.parentNode.parentNode.parentNode.getAttribute('id'))
 }

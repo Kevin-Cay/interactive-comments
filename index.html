@@ -151,7 +151,7 @@
                 </p>
             </div>
             <div class="edit-delete">
-                <div class="delete">
+                <div class="delete" onclick="deleteComment(event)" >
                     <div class="delete-img ">
 
                     </div>
@@ -159,7 +159,7 @@
                         Delete
                     </p>
                 </div>
-                <div class="edit">
+                <div class="edit" onclick="editComment(event)" >
                     <div class="edit-img">
 
                     </div>
@@ -211,16 +211,16 @@
                 </p>
             </div>
             <div class="edit-delete ">
-                <div class="delete ">
-                    <div class="delete-img ">
+                <div class="delete " onclick="deleteComment(event)" >
+                    <div class="delete-img "  >
 
                     </div>
                     <p>
                         Delete
                     </p>
                 </div>
-                <div class="edit ">
-                    <div class="edit-img ">
+                <div class="edit " onclick="editComment(event)" >
+                    <div class="edit-img "  >
 
                     </div>
                     <p>
@@ -233,7 +233,7 @@
     </div>
     </template>
     <template id="add-comment">
-        <div class="add-comment" >
+        <div class="add-comment" id="0" >
             <form action=" " onsubmit="addComment(event)" >
                 <div class="add-comment-profile ">
                     <div class="profile-img" id="profile-img-add" >
@@ -245,7 +245,7 @@
             </form>
         </div>
         </template>
-    <template class="delete-popup ">
+    <template id="delete-popup" class="delete-popup ">
             <div class="delete-card ">
                 <h1>Delete comment</h1>
                 <p>
@@ -260,7 +260,7 @@
                     </button>
                 </div>
             </div>
-        </template>
+    </template>
     <!-- Pull dynamic content from the data.json file -->
 
     <!-- <div class="attribution ">
