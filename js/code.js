@@ -11,6 +11,23 @@ let youReplyCommentTemplate = document.getElementById('you-reply-template').cont
 const fragment = document.createDocumentFragment();
 
 const data = {};
+/**
+ * This is the comment template
+ */
+const newCommentTemplate = {
+    "id": 0,
+    "content": "",
+    "createdAt": "Today",
+    "score": 0,
+    "user": {
+        "image": {
+            "png": "",
+            "webp": ""
+        },
+        "username": ""
+    },
+    "replies": []
+}
 
 /**
  * 
@@ -20,6 +37,7 @@ onload = async() => {
     let localData = localStorage.getItem('commentData')
     if (localData) {
         const responseData = JSON.parse(localData)
+        console.log(responseData)
         data.comments = responseData.comments
         data.currentUser = responseData.currentUser
         currentUser = data.currentUser;
@@ -88,6 +106,18 @@ function fillTemplate(template, data, id) {
     fragment.appendChild(clone);
 }
 
+function fillReply(template, data, id) {
+    template.querySelector('.comment').setAttribute('id', id)
+    template.querySelector('.comment').setAttribute('name', data.user.username)
+    template.getElementById('comment-profile-img').innerHTML = `<img src="${data.user.image.png}" alt="">`;
+    template.getElementById('name').innerHTML = data.user.username;
+    template.getElementById('date').innerHTML = data.createdAt;
+    template.getElementById('comment-text').textContent = data.content
+    template.getElementById('score').innerHTML = data.score;
+    const clone = template.cloneNode(true);
+    return clone
+}
+
 
 /**
  * 
@@ -101,11 +131,6 @@ function printAddComent() {
 }
 
 
-
-function addComment(event) {
-    event.preventDefault()
-    console.log(event.target.comment.value)
-}
 
 /**
  * 
@@ -167,13 +192,58 @@ function replyComment(event) {
     if (event.parentNode.getAttribute('replying')) {} else {
         event.parentNode.setAttribute('replying', 'true')
         let id = event.parentNode.getAttribute('id')
+        let elementSelected = document.getElementById(id)
         let username = event.parentNode.getAttribute('name')
         username = '@'.concat(username).concat(', ')
-        let elementSelected = document.getElementById(id)
+        addCommentTemplate.querySelector('.add-comment').setAttribute('id', `-${id}`)
         addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
         addCommentTemplate.querySelector('.comment-textarea').value = username
-        addCommentTemplate.getElementById('input-comment-submit').value = "Reply"
+        addCommentTemplate.getElementById('input-comment-submit').value = "reply"
         const clone = addCommentTemplate.cloneNode(true);
         elementSelected.after(clone)
     }
+}
+
+
+function addComment(event) {
+    event.preventDefault()
+    let type = event.target.button.value
+    let comment = event.target.comment.value
+    let id = event.target.parentElement.getAttribute('id')
+    id = id.slice(1, id.length).split('-')
+    let newComment = newCommentTemplate
+    let idNumber = 0
+    let index = 0
+    switch (type) {
+        case 'reply':
+            let commentLength = comment.split(', ')[1].length
+
+            if (commentLength > 0 && id.length === 1) {
+                let idList = data.comments.map((el) => el.id)
+                idNumber = Math.max(...idList) + 1
+                index = data.comments.findIndex(el => el.id === Number(id[0]))
+            } else if (commentLength > 0 && id.length === 2) {
+                let firstIndex = data.comments.findIndex(el => el.id === Number(id[0]))
+                let idList = data.comments[firstIndex].replies.map((el) => el.id)
+                idNumber = Math.max(...idList) + 1
+                index = firstIndex
+            }
+            newComment.id = idNumber
+            newComment.content = comment
+            newComment.user.username = data.currentUser.username
+            newComment.user.image.png = data.currentUser.image.png
+            newComment.user.image.webp = data.currentUser.image.webp
+            data.comments[index].replies.push(newComment)
+            localStorage.setItem('commentData', JSON.stringify(data))
+            container.innerHTML = ""
+            printComments(data.comments)
+            break;
+        case 'send':
+            break;
+        case 'edit':
+            break;
+        default:
+            break;
+    }
+
 }
