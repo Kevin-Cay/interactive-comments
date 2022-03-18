@@ -151,7 +151,7 @@
                 </p>
             </div>
             <div class="edit-delete">
-                <div class="delete" onclick="deleteComment(event)" >
+                <div class="delete" onclick="deletePopup(event)" >
                     <div class="delete-img ">
 
                     </div>
@@ -211,7 +211,7 @@
                 </p>
             </div>
             <div class="edit-delete ">
-                <div class="delete " onclick="deleteComment(event)" >
+                <div class="delete " onclick="deletePopup(event)" >
                     <div class="delete-img "  >
 
                     </div>
@@ -245,20 +245,22 @@
             </form>
         </div>
         </template>
-    <template id="delete-popup" class="delete-popup ">
-            <div class="delete-card ">
+    <template id="delete-popup">
+        <div class="delete-popup">
+            <div class="delete-card">
                 <h1>Delete comment</h1>
                 <p>
                     Are you sure you want to delete this comment? This will remove the comment and cant't be undone.
                 </p>
-                <div class="delete-options ">
-                    <button id="button-cancel ">
+                <div class="delete-options">
+                    <button id="button-cancel">
                         no, cancel
                     </button>
-                    <button id="button-delete ">
+                    <button id="button-delete" onclick="deleteComment(event)" >
                         yes, delete
                     </button>
                 </div>
+            </div>
             </div>
     </template>
     <!-- Pull dynamic content from the data.json file -->

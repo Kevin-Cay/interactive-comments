@@ -105,8 +105,6 @@ function fillTemplate(template, data, id) {
     fragment.appendChild(clone);
 }
 
-
-
 /**
  * 
  * @param {Object} userInfo 
@@ -263,15 +261,34 @@ function addComment(event) {
 }
 
 
-function deleteComment(event) {
+function deletePopup(event) {
     event.preventDefault()
     let id = event.target.parentNode.parentNode.parentNode.getAttribute('id')
-    console.log(id)
-
-
+    deletePopupTemplate.querySelector('.delete-popup').style.display = 'flex'
+    deletePopupTemplate.querySelector('.delete-card').setAttribute('id', `${id}`)
+    const clone = deletePopupTemplate.cloneNode(true);
+    container.appendChild(clone)
 }
+
+function deleteComment(event) {
+    event.preventDefault()
+    let id = event.target.parentNode.parentNode.getAttribute('id')
+    let idList = id.split('-')
+    if (idList.length === 1) {
+        let index = data.comments.findIndex(el => el.id === Number(idList[0]))
+        data.comments.splice(index, 1)
+    } else {
+        let firstIndex = data.comments.findIndex(el => el.id === Number(idList[0]))
+        let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === Number(idList[1]))
+        data.comments[firstIndex].replies.splice(secondIndex, 1)
+    }
+    localStorage.setItem('commentData', JSON.stringify(data))
+    container.innerHTML = ''
+    printComments(data.comments)
+}
+
 
 function editComment(event) {
     event.preventDefault()
-    console.log(event.target.parentNode.parentNode.parentNode.getAttribute('id'))
+    let id = event.target.parentNode.parentNode.parentNode.getAttribute('id')
 }
