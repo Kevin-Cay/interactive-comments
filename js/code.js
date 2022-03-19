@@ -231,38 +231,42 @@ function addComment(event) {
             printComments(data.comments)
             break;
         case 'send':
-            idList = data.comments.map((el) => el.id)
-            idNumber = Math.max(...idList) + 1
-            newComment.id = idNumber
-            newComment.content = comment
-            newComment.createdAt = 'Today'
-            newComment.score = 0
-            newComment.user = {}
-            newComment.user.username = data.currentUser.username
-            newComment.user.image = {}
-            newComment.user.image.png = data.currentUser.image.png
-            newComment.user.image.webp = data.currentUser.image.webp
-            newComment.replies = []
-            data.comments.push(newComment)
-            localStorage.setItem('commentData', JSON.stringify(data))
-            container.innerHTML = ''
-            printComments(data.comments)
+            if (comment.length > 0) {
+                idList = data.comments.map((el) => el.id)
+                idNumber = Math.max(...idList) + 1
+                newComment.id = idNumber
+                newComment.content = comment
+                newComment.createdAt = 'Today'
+                newComment.score = 0
+                newComment.user = {}
+                newComment.user.username = data.currentUser.username
+                newComment.user.image = {}
+                newComment.user.image.png = data.currentUser.image.png
+                newComment.user.image.webp = data.currentUser.image.webp
+                newComment.replies = []
+                data.comments.push(newComment)
+                localStorage.setItem('commentData', JSON.stringify(data))
+                container.innerHTML = ''
+                printComments(data.comments)
+            }
             break;
         case 'edit':
-            id = id.slice(1, id.length).split('-')
-            if (id.length === 1) {
-                index = data.comments.findIndex(el => el.id === Number(id[0]))
-                data.comments[index].content = comment
-                localStorage.setItem('commentData', JSON.stringify(data))
-            } else {
-                let firstIndex = data.comments.findIndex(el => el.id === Number(id[0]))
-                let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === Number(id[1]))
-                data.comments[firstIndex].replies[secondIndex].content = comment
-                localStorage.setItem('commentData', JSON.stringify(data))
+            if (comment.length > 0) {
+                id = id.slice(1, id.length).split('-')
+                if (id.length === 1) {
+                    index = data.comments.findIndex(el => el.id === Number(id[0]))
+                    data.comments[index].content = comment
+                    localStorage.setItem('commentData', JSON.stringify(data))
+                } else {
+                    let firstIndex = data.comments.findIndex(el => el.id === Number(id[0]))
+                    let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === Number(id[1]))
+                    data.comments[firstIndex].replies[secondIndex].content = comment
+                    localStorage.setItem('commentData', JSON.stringify(data))
+                }
+                container.innerHTML = ''
+                printComments(data.comments)
+                break;
             }
-            container.innerHTML = ''
-            printComments(data.comments)
-            break;
         default:
             break;
     }
