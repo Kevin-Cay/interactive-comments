@@ -178,11 +178,9 @@ function replyComment(event) {
         event.parentNode.setAttribute('replying', 'true')
         let id = event.parentNode.getAttribute('id')
         let elementSelected = document.getElementById(id)
-        let username = event.parentNode.getAttribute('name')
-        username = '@'.concat(username).concat(', ')
         addCommentTemplate.querySelector('.add-comment').setAttribute('id', `-${id}`)
         addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
-        addCommentTemplate.querySelector('.comment-textarea').value = username
+        addCommentTemplate.querySelector('.comment-textarea').value = `@${data.currentUser.username}, `
         addCommentTemplate.getElementById('input-comment-submit').value = "reply"
         const clone = addCommentTemplate.cloneNode(true);
         elementSelected.after(clone)
@@ -201,9 +199,9 @@ function addComment(event) {
     let idNumber = 0
     let index = 0
     let idList = 0
+    let id = event.target.parentElement.getAttribute('id')
     switch (type) {
         case 'reply':
-            let id = event.target.parentElement.getAttribute('id')
             id = id.slice(1, id.length).split('-')
             let commentLength = comment.split(', ')[1].length
             if (commentLength > 0 && id.length === 1) {
@@ -247,9 +245,23 @@ function addComment(event) {
             newComment.replies = []
             data.comments.push(newComment)
             localStorage.setItem('commentData', JSON.stringify(data))
-            location.reload()
+            container.innerHTML = ''
+            printComments(data.comments)
             break;
         case 'edit':
+            id = id.slice(1, id.length).split('-')
+            if (id.length === 1) {
+                index = data.comments.findIndex(el => el.id === Number(id[0]))
+                data.comments[index].content = comment
+                localStorage.setItem('commentData', JSON.stringify(data))
+            } else {
+                let firstIndex = data.comments.findIndex(el => el.id === Number(id[0]))
+                let secondIndex = data.comments[firstIndex].replies.findIndex(el => el.id === Number(id[1]))
+                data.comments[firstIndex].replies[secondIndex].content = comment
+                localStorage.setItem('commentData', JSON.stringify(data))
+            }
+            container.innerHTML = ''
+            printComments(data.comments)
             break;
         default:
             break;
@@ -289,6 +301,14 @@ function deleteComment(event) {
 
 
 function editComment(event) {
-    event.preventDefault()
     let id = event.target.parentNode.parentNode.parentNode.getAttribute('id')
+    let elementSelected = document.getElementById(id)
+    elementSelected.style.display = 'none'
+    let comment = event.target.parentNode.parentNode.parentElement.querySelector('#comment-text').textContent
+    addCommentTemplate.querySelector('.add-comment').setAttribute('id', `+${id}`)
+    addCommentTemplate.getElementById('profile-img-add').innerHTML = `<img src="${data.currentUser.image.png}" alt="">`;
+    addCommentTemplate.querySelector('.comment-textarea').value = comment
+    addCommentTemplate.getElementById('input-comment-submit').value = "edit"
+    const clone = addCommentTemplate.cloneNode(true);
+    elementSelected.after(clone)
 }
